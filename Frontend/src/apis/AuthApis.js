@@ -39,3 +39,8 @@ export const postAnswers = async (data) => {
     const url = `${BASE_URL}/signup/postans`;
     return postApi(url, data);
 }
+
+export const verifyMathSkill = async (data) => {
+    const url = `${BASE_URL}/login/verifyMathSkill`;
+    return postApi(url, data);
+};

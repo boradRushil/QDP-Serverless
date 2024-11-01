@@ -5,6 +5,7 @@ import './App.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import ForgotPassword from './pages/ForgotPassword';
 import LoginVerify from './pages/LoginVerify';
 import VerifyEmail from './pages/VerifyEmail';
 import SecurityQuestions from './pages/SecurityQuestions';
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/loginverify" element={<LoginVerify />} />
         <Route path="/verifyemail" element={<VerifyEmail />} />
         <Route path="/securityquestions" element={<SecurityQuestions />} />

@@ -3,6 +3,7 @@ import React from 'react';
 import UserPool from '../utils/UserPool';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const OTPComponent = (data) => {
     const [formData, setFormData] = React.useState({
@@ -14,7 +15,7 @@ const OTPComponent = (data) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formData.otp, data.email, data.password,data.name);
+        console.log(formData.otp, data.email, data.password, data.name);
 
         const user = new CognitoUser({
             Username: data.email,
@@ -31,7 +32,7 @@ const OTPComponent = (data) => {
             console.log('OTP confirmed:', result);
 
             const authDetails = new AuthenticationDetails({
-                Username: data.email,     
+                Username: data.email,
                 Password: data.password
             });
 
@@ -40,8 +41,7 @@ const OTPComponent = (data) => {
                 onSuccess: (data) => {
                     console.log('Authentication successful:', data);
                     toast.success("OTP verified successfully");
-                    console.log(data);
-                    navigate('/securityquestions', { state: { email: email, name: name  } });
+                    navigate('/securityquestions', { state: { email: email, name: name } });
                 },
                 onFailure: (err) => {
                     console.error('Authentication failed:', err);
@@ -55,20 +55,37 @@ const OTPComponent = (data) => {
     };
 
     return (
-        <div>
-            <h2>Please enter the OTP</h2>
-            <form onSubmit={handleSubmit}>
-                <label htmlFor="otp">OTP</label>
-                <input
-                    type="text"
-                    id="otp"
-                    value={formData.otp}
-                    onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
-                    placeholder="Enter OTP"
-                    required
-                />
-                <button type="submit">Submit</button>
-            </form>
+        <div className="container-fluid otp-background d-flex align-items-center vh-100">
+            <div className="row justify-content-center w-100">
+                <div className="col-md-4">
+                    <div className="card shadow-lg border-0 rounded-lg">
+                        <div className="card-header bg-primary text-white text-center">
+                            <h2 className="my-2">OTP Verification</h2>
+                        </div>
+                        <div className="card-body">
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group mb-3">
+                                    <label htmlFor="otp" className="form-label fw-bold">Enter OTP</label>
+                                    <input
+                                        type="text"
+                                        id="otp"
+                                        className="form-control"
+                                        value={formData.otp}
+                                        onChange={(e) => setFormData({ ...formData, otp: e.target.value })}
+                                        placeholder="Enter OTP"
+                                        required
+                                    />
+                                </div>
+                                <div className="d-grid">
+                                    <button type="submit" className="btn btn-primary">
+                                        Submit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
