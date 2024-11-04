@@ -9,6 +9,7 @@ import LoginVerify from './pages/LoginVerify';
 import VerifyEmail from './pages/VerifyEmail';
 import SecurityQuestions from './pages/SecurityQuestions';
 import { Auth } from './context/authContext';
+import DummyBot from './pages/DummyBot';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
         <Route path="/loginverify" element={<LoginVerify />} />
         <Route path="/verifyemail" element={<VerifyEmail />} />
         <Route path="/securityquestions" element={<SecurityQuestions />} />
+        <Route path="/dummybot" element={<DummyBot />} />
       </Routes>
       <Toaster />
     </Router>

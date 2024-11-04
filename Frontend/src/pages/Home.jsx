@@ -9,7 +9,7 @@ const Home = () => {
   };
   return (
     <div>
-      Hello thi is the home page
+      Hello this is the home page
       <button onClick={handleLogout}>logout</button>
     </div>
   );
