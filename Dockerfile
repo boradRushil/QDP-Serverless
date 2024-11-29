@@ -11,7 +11,7 @@ COPY Frontend/package*.json ./
 RUN npm install
 
 # Copy the rest of the frontend files into the container
-COPY frontend/ ./
+COPY Frontend/ ./
 
 # Build the app (includes Tailwind, Flowbite, and Axios)
 RUN npm run build
