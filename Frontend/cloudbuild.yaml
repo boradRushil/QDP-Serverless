@@ -4,7 +4,7 @@ options:
 steps:
   # Step 1: Create the Docker image for the frontend application
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'us-central1-docker.pkg.dev/serverless-data-processing-prj/serverless-frontend/qdp:latest', '.']
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/serverless-data-processing-prj/serverless-frontend-sdp8/qdp:latest', '.']
 
   # Step 2: Push the Docker image to Google Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
