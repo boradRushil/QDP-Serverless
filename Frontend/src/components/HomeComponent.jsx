@@ -1,9 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const HomeComponent = () => {
   const [popup, setPopup] = useState({ show: false, text: '' });
+
+  useEffect(() => {
+    // Check if Dialogflow Messenger is already loaded
+    if (!window.dfMessengerLoaded) {
+      // Mark as loaded to prevent further loads
+      window.dfMessengerLoaded = true;
+
+      // Load Dialogflow Messenger styles
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css';
+      document.head.appendChild(link);
+
+      // Load Dialogflow Messenger script
+      const script = document.createElement('script');
+      script.src = 'https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js';
+      script.async = true;
+      script.crossOrigin = 'anonymous';
+
+      script.onload = () => {
+        // Create the df-messenger component once the script is loaded
+        const dfMessenger = document.createElement('df-messenger');
+        dfMessenger.setAttribute('location', 'us-central1');
+        dfMessenger.setAttribute('project-id', 'quickdataprocessor');
+        dfMessenger.setAttribute('agent-id', '6d2bd33a-2fd5-40af-beb2-d1b92f9ee4cc'); // Replace with your actual agent ID
+        dfMessenger.setAttribute('language-code', 'en');
+        
+        // Apply some custom styling via attributes
+        dfMessenger.setAttribute('chat-icon', 'https://your-logo-url.com/logo.png'); // Optional, replace with your icon URL
+        dfMessenger.setAttribute('allow', 'microphone'); // Optional for voice queries
+
+        // Append df-messenger to the body
+        document.body.appendChild(dfMessenger);
+      };
+
+      document.body.appendChild(script);
+    }
+  }, []);
 
   const features = [
     {
@@ -174,7 +212,10 @@ const HomeComponent = () => {
           </Row>
         </Container>
       </footer>
+      
     </Container>
+
+    
   );
 };
 
