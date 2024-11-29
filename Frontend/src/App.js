@@ -40,8 +40,6 @@ function App() {
                             path="service3"
                             element={<Service3 service={{ name: 'Word Cloud Generator' }} />}
                         />
-                        {/*<Route path="service2" element={<Service2 />} />*/}
-                        {/*<Route path="service3" element={<Service3 />} />*/}
                     </Route>
                 </Routes>
                 <Toaster />
