@@ -106,7 +106,7 @@ const Service3 = ({ service }) => {
                             disabled={!uploadedFile || loading}
                             className="mx-2"
                         >
-                            {loading ? <Spinner animation="border" size="sm" /> : 'Process JSON to CSV'}
+                            {loading ? <Spinner animation="border" size="sm" /> : 'Generate Word Cloud'}
                         </Button>
                         <Button
                             variant="info"
