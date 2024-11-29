@@ -27,6 +27,28 @@
 .App-link {
   color: #61dafb;
 }
+.sidebar {
+  height: 100%;
+  background-color: #343a40;
+  color: white;
+}
+
+.sidebar-item:hover {
+  background-color: #495057;
+  cursor: pointer;
+}
+
+.card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.navbar {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
 @keyframes App-logo-spin {
   from {
