@@ -21,6 +21,8 @@ const Service2 = ({ service }) => {
         const file = event.target.files[0];
         if (file) {
             setUploadedFile(file);
+            setReferenceCode('');
+            setProcessingStatus('');
             showToastMessage('File selected successfully.');
         }
     };

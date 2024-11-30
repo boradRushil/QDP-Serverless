@@ -21,6 +21,9 @@ const Service1 = ({ service }) => {
         const file = event.target.files[0];
         if (file) {
             setUploadedFile(file);
+            setDownloadUrl(null);
+            setReferenceCode('');
+            setProcessingStatus('');
             showToastMessage('File selected successfully.');
         }
     };
@@ -142,14 +145,15 @@ const Service1 = ({ service }) => {
                             Check Status
                         </Button>
                         <Button
-                            variant="success"
-                            href={downloadUrl}
+                            variant={downloadUrl ? 'success' : 'secondary'}
+                            href={downloadUrl || '#'}
                             target="_blank"
                             disabled={!downloadUrl}
-                            className="mx-2"
+                            className="mx-2 d-flex align-items-center"
                         >
                             Download File
                         </Button>
+
                     </Col>
                 </Row>
 
@@ -190,21 +194,23 @@ const Service1 = ({ service }) => {
                     )}
                     </tbody>
                 </Table>
+                <ToastContainer position="top-end" className="p-3">
+                    <Toast
+                        onClose={() => setShowToast(false)}
+                        show={showToast}
+                        delay={2000}
+                        autohide={true}
+                    >
+                        <Toast.Header>
+                            <strong className="me-auto">Notification</strong>
+                        </Toast.Header>
+                        <Toast.Body>{toastMessage || 'Default Message'}</Toast.Body>
+                    </Toast>
+                </ToastContainer>
+
             </Card.Body>
 
-            <ToastContainer position="bottom-end" className="p-3">
-                <Toast
-                    onClose={() => setShowToast(false)}
-                    show={showToast}
-                    delay={3000}
-                    autohide
-                >
-                    <Toast.Header>
-                        <strong className="me-auto">Notification</strong>
-                    </Toast.Header>
-                    <Toast.Body>{toastMessage}</Toast.Body>
-                </Toast>
-            </ToastContainer>
+
         </Card>
     );
 };
