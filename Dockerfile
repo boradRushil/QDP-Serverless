@@ -2,7 +2,6 @@
 FROM node as build
 WORKDIR /app
 COPY Frontend/package.json ./
-COPY Frontend/package-lock.json ./
 RUN npm install
 COPY Frontend/ .
 RUN npm run build
