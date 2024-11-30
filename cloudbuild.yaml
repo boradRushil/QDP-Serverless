@@ -24,6 +24,10 @@ steps:
       - '--region'
       - 'us-central1'
       - '--allow-unauthenticated'
+      - '--update-secrets'
+      - 'REACT_APP_USER_POOL_ID=projects/serverless-data-processing-prj/secrets/REACT_APP_USER_POOL_ID:latest'
+      - 'REACT_APP_CLIENT_ID=projects/serverless-data-processing-prj/secrets/REACT_APP_CLIENT_ID:latest'
+      - 'REACT_APP_BASE_URL=projects/serverless-data-processing-prj/secrets/REACT_APP_BASE_URL:latest'
 
   # Step 4: Make the Cloud Run service publicly accessible
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
