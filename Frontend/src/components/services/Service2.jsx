@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Card, Row, Col, Button, Table, Spinner, Toast, ToastContainer } from 'react-bootstrap';
 
 const Service2 = ({ service }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
     const [referenceCode, setReferenceCode] = useState('');
-    const [processingStatus, setProcessingStatus] = useState('');
     const [entities, setEntities] = useState([]);
+    const [previousResults, setPreviousResults] = useState([]); // To store previous results
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
+    const userEmail = "user@example.com"; // Example email, replace with actual
 
     const showToastMessage = (message) => {
         setToastMessage(message);
@@ -45,9 +46,13 @@ const Service2 = ({ service }) => {
             });
 
             const result = await response.json();
-            setReferenceCode(result.referenceCode);
-            setProcessingStatus('In Progress');
-            showToastMessage('File processing started successfully.');
+            if (response.ok) {
+                setReferenceCode(result.referenceCode);
+                setProcessingStatus('In Progress');
+                showToastMessage('File processing started successfully.');
+            } else {
+                showToastMessage(result.message || 'Error processing file.');
+            }
         } catch (error) {
             console.error('Error during file processing:', error);
             showToastMessage('Error during file processing.');
@@ -70,13 +75,23 @@ const Service2 = ({ service }) => {
             });
 
             const result = await response.json();
-            setProcessingStatus(result.ProcessingStatus);
+            if (response.ok) {
+                setProcessingStatus(result.ProcessingStatus);
 
-            if (result.ProcessingStatus === 'Completed') {
-                setEntities(result.Entities);
-                showToastMessage('File processing completed. Entities extracted.');
+                if (result.ProcessingStatus === 'Completed') {
+                    // Map and update entities
+                    const extractedEntities = result.Entities.map((entity) => ({
+                        text: entity.text,
+                        label: entity.label,
+                    }));
+                    setEntities(extractedEntities);
+
+                    showToastMessage('File processing completed. Entities extracted.');
+                } else {
+                    showToastMessage('File is still processing. Please check again later.');
+                }
             } else {
-                showToastMessage('File is still processing. Please check again later.');
+                showToastMessage(result.message || 'Error checking status.');
             }
         } catch (error) {
             console.error('Error during status check:', error);
@@ -85,17 +100,41 @@ const Service2 = ({ service }) => {
     };
 
     const handleDownloadEntities = () => {
-        const blob = new Blob(
-            entities.map((entity) => `${entity.text} (${entity.label})\n`),
-            { type: 'text/plain;charset=utf-8' }
-        );
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${referenceCode}_entities.txt`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        if (entities.length > 0) {
+            const content = entities
+                .map((entity) => `${entity.text} (${entity.label})`)
+                .join('\n');
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${referenceCode}_entities.txt`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+    // Fetch previous results when the component mounts
+    const fetchPreviousResults = async () => {
+        try {
+            const response = await fetch(`https://fk3uxpyogkxg7kwg26q75vxm3m0pccsu.lambda-url.us-east-1.on.aws/?user_email=${encodeURIComponent(userEmail)}`);
+            const results = await response.json();
+            setPreviousResults(results.named_entities_results); // Update the previousResults state with fetched data
+        } catch (error) {
+            console.error('Error fetching previous results:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPreviousResults(); // Call fetchPreviousResults on component mount
+    }, []);
+
+    const formatDate = (dateString) => {
+        // Remove microseconds and keep the timestamp in a format that JS can handle
+        const formattedDateString = dateString.split('.')[0];  // Split and remove microseconds
+        const date = new Date(formattedDateString);  // Create Date object
+
+        return date.toLocaleString();  // Format the date to a readable string
     };
 
     return (
@@ -140,35 +179,77 @@ const Service2 = ({ service }) => {
                         </Button>
                     </Col>
                 </Row>
-
-                <Table bordered hover className="mt-4">
+                <Table bordered hover>
                     <thead>
                     <tr>
                         <th>Reference Code</th>
+                        <th>File Name</th>
+                        <th>Date</th>
                         <th>Status</th>
                         <th>Entities Extracted</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>{referenceCode || 'N/A'}</td>
-                        <td>{processingStatus || 'N/A'}</td>
-                        <td>
-                            {entities.length > 0 ? (
-                                <ul>
-                                    {entities.map((entity, index) => (
-                                        <li key={index}>
-                                            {entity.text} ({entity.label})
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                'Not available'
-                            )}
-                        </td>
-                    </tr>
+                    {previousResults.length > 0 ? (
+                        previousResults.map((result, index) => (
+                            <tr key={index}>
+                                <td>{result.reference_code}</td>
+                                <td>{result.file_name.split('_')[1]}</td>
+                                <td>{formatDate(result.processing_date)}</td>
+                                <td>{result.processing_status}</td>
+                                <td>
+                                    {result.named_entities.length > 0 ? (
+                                        <ul>
+                                            {result.named_entities.map((entity, index) => (
+                                                <li key={index}>
+                                                    {entity.text} ({entity.label})
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        'Not available'
+                                    )}
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="3" className="text-center">
+                                No previous results found.
+                            </td>
+                        </tr>
+                    )}
                     </tbody>
                 </Table>
+                {/*<Table bordered hover className="mt-4">*/}
+                {/*    <thead>*/}
+                {/*    <tr>*/}
+                {/*        <th>Reference Code</th>*/}
+                {/*        <th>Status</th>*/}
+                {/*        <th>Entities Extracted</th>*/}
+                {/*    </tr>*/}
+                {/*    </thead>*/}
+                {/*    <tbody>*/}
+                {/*    <tr>*/}
+                {/*        <td>{referenceCode || 'N/A'}</td>*/}
+                {/*        <td>{processingStatus || 'N/A'}</td>*/}
+                {/*        <td>*/}
+                {/*            {entities.length > 0 ? (*/}
+                {/*                <ul>*/}
+                {/*                    {result.named_entities_results.map((entity, index) => (*/}
+                {/*                        <li key={index}>*/}
+                {/*                            {entity.text} ({entity.label})*/}
+                {/*                        </li>*/}
+                {/*                    ))}*/}
+                {/*                </ul>*/}
+                {/*            ) : (*/}
+                {/*                'Not available'*/}
+                {/*            )}*/}
+                {/*        </td>*/}
+                {/*    </tr>*/}
+                {/*    </tbody>*/}
+                {/*</Table>*/}
+
             </Card.Body>
 
             <ToastContainer position="bottom-end" className="p-3">
