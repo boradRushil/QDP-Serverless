@@ -4,6 +4,7 @@ import { Card, Row, Col, Button, Table, Spinner, Toast, ToastContainer } from 'r
 const Service1 = ({ service }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
     const [referenceCode, setReferenceCode] = useState('');
+    const [processingStatus, setProcessingStatus] = useState('');
     const [downloadUrl, setDownloadUrl] = useState(null);
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState('');

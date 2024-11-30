@@ -4,6 +4,7 @@ import { Card, Row, Col, Button, Table, Spinner, Toast, ToastContainer } from 'r
 const Service2 = ({ service }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
     const [referenceCode, setReferenceCode] = useState('');
+    const [processingStatus, setProcessingStatus] = useState('');
     const [entities, setEntities] = useState([]);
     const [previousResults, setPreviousResults] = useState([]); // To store previous results
     const [loading, setLoading] = useState(false);
