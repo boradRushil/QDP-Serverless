@@ -10,7 +10,7 @@ const Service1 = ({ service }) => {
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
     const [previousResults, setPreviousResults] = useState([]);
-    const userEmail = "user@example.com"; // Example email, replace with actual
+    const userEmail = "user@example.com";
 
     const showToastMessage = (message) => {
         setToastMessage(message);

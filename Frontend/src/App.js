@@ -13,6 +13,7 @@ import Service1 from './components/services/Service1';
 import Service2 from './components/services/Service2';
 import Service3 from './components/services/Service3';
 import { Auth } from './context/authContext';
+import ServiceShowcase from "./components/ServiceShowcase";
 
 function App() {
     return (
