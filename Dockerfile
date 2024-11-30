@@ -1,23 +1,16 @@
-# Use Node 16 base image
-FROM node:16-alpine
-
-# Set the working directory inside the container
+# Step 1: Build the React app
+FROM node as build
 WORKDIR /app
-
-# Copy package.json and package-lock.json for dependency installation
-COPY Frontend/package*.json ./
-
-# Install dependencies
+COPY Frontend/package.json ./
+COPY Frontend/package-lock.json ./
 RUN npm install
-
-# Copy the rest of the frontend files into the container
-COPY Frontend/ ./
-
-# Build the app (includes Tailwind, Flowbite, and Axios)
+COPY Frontend/ .
 RUN npm run build
 
-# Expose the necessary port (default 3000 for serve)
+# Step 2: Serve with Nginx
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+# Copy custom Nginx configuration
+COPY Frontend/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 3000
-
-# Start the app
-CMD ["npx", "serve","build"]
+CMD ["nginx", "-g", "daemon off;"]
