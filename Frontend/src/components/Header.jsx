@@ -1,7 +1,7 @@
 import React from 'react';
-import { Navbar } from 'react-bootstrap';
+import { Navbar, Button } from 'react-bootstrap';
 
-const Header = ({ title }) => {
+const Header = ({ title, onLogout }) => {
     return (
         <Navbar bg="primary" variant="dark" className="px-4 py-2">
             <Navbar.Brand className="fw-bold">
@@ -9,7 +9,10 @@ const Header = ({ title }) => {
             </Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-                {/* Add user profile, logout etc. */}
+                {/* Add user profile or other elements here */}
+                <Button variant="outline-light" onClick={onLogout}>
+                    Logout
+                </Button>
             </Navbar.Collapse>
         </Navbar>
     );
