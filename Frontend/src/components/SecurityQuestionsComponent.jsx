@@ -42,7 +42,7 @@ const SecurityQuestionsComponent = (data) => {
         name: name,
         role: "user"
       });
-
+      
       navigate('/');
       toast.success('Security answer submitted successfully');
     } catch (error) {

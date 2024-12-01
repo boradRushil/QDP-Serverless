@@ -12,7 +12,10 @@ import Dashboard from './pages/Dashboard';
 import Service1 from './components/services/Service1';
 import Service2 from './components/services/Service2';
 import Service3 from './components/services/Service3';
+import Analytics from './pages/Analytics';
+import FeedbackTable from './pages/FeedbackTable';
 import { Auth } from './context/authContext';
+import Protected from './utils/Protected';
 
 function App() {
     return (
@@ -27,14 +30,16 @@ function App() {
                     <Route path="/verifyemail" element={<VerifyEmail />} />
                     <Route path="/securityquestions" element={<SecurityQuestions />} />
                     <Route path="/dummybot" element={<DummyBot />} />
+                    <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/feedbacktable" element={<FeedbackTable />} />
                     <Route path="/dashboard" element={<Dashboard />}>
                         <Route
                             path="service1"
-                            element={<Service1 service={{ name: 'JSON to CSV Converter' }} />}
+                            element={<Protected><Service1 service={{ name: 'JSON to CSV Converter' }} /></Protected>}
                         />
                         <Route
                             path="service2"
-                            element={<Service2 service={{ name: 'Named Entity Extractor' }} />}
+                            element={<Protected><Service2 service={{ name: 'Named Entity Extractor' }} /></Protected>}
                         />
                         <Route
                             path="service3"

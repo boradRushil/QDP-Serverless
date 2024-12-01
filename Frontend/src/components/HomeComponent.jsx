@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuth } from '../context/authContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const HomeComponent = () => {
   const [popup, setPopup] = useState({ show: false, text: '' });
+  const { status, logout, setStatus, getSession } = useAuth();
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestPopup, setGuestPopup] = useState(false);
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    console.log("Logging out");
+    logout();
+    navigate('/');
+  }
 
   useEffect(() => {
+    getSession();
     // Check if Dialogflow Messenger is already loaded
     if (!window.dfMessengerLoaded) {
       // Mark as loaded to prevent further loads
@@ -48,21 +61,30 @@ const HomeComponent = () => {
       title: "JSON to CSV Conversion",
       text: "Automatically convert JSON files to CSV format using AWS Glue.",
       iconClass: "fas fa-file-code",
-      tech: "AWS Glue | DynamoDB"
+      tech: "AWS Glue | DynamoDB",
+      route: "/dashboard/service1"
     },
     {
       title: "Named Entity Recognition",
       text: "Extract named entities from text files using AWS Lambda.",
       iconClass: "fas fa-project-diagram",
-      tech: "AWS Lambda | DynamoDB"
+      tech: "AWS Lambda | DynamoDB",
+      route: "/dashboard/service2"
     },
     {
       title: "Word Cloud Generation",
       text: "Generate interactive word clouds from text files using GCP Looker Studio for powerful visualization.",
       iconClass: "fas fa-cloud",
-      tech: "GCP Looker Studio"
+      tech: "GCP Looker Studio",
+      route: "/dashboard/service3"
     }
   ];
+
+  const handleGuestPopup = () => {
+    localStorage.setItem('userEmail', guestEmail);
+    setGuestPopup(false);
+    navigate('/dashboard');
+  }
 
   const handleMouseEnter = (text) => {
     setPopup({ show: true, text });
@@ -99,6 +121,7 @@ const HomeComponent = () => {
                       e.currentTarget.style.transform = 'scale(1)';
                       e.currentTarget.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
                     }}
+                    onClick={() => navigate(feature.route)} 
                   >
                     <Card.Body className="text-center">
                       <i className={`${feature.iconClass} text-primary mb-3`} style={{ fontSize: '3rem' }}></i>
@@ -167,9 +190,10 @@ const HomeComponent = () => {
               />
               <h2 className="mb-4">Welcome to Quick Data Processor</h2>
             </div>
-            
-            <div className="d-grid gap-2">
-              <Button 
+            {
+              !status ? (
+                <div className="d-grid gap-2">
+                  <Button 
                 variant="primary" 
                 size="lg" 
                 className="w-100"
@@ -186,8 +210,61 @@ const HomeComponent = () => {
               >
                 Sign Up
               </Button>
-            </div>
+              <Button 
+                variant="outline-primary" 
+                size="lg" 
+                className="w-100"
+                onClick={() => setGuestPopup(true)}
+              >
+                Enter as guest
+              </Button>
+             </div>
+            ) : (
+              <>
+                <div className="d-grid gap-2">
+                  <Button 
+                    variant="primary" 
+                    size="lg" 
+                    className="w-100"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </div>
+              </>
+            )}
             
+            {guestPopup && (
+              <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(5px)', zIndex: 1000}}>
+                <div className="card shadow-lg" style={{maxWidth: '400px', width: '90%'}}>
+                  <div className="card-header bg-primary text-white">
+                    <h5 className="card-title mb-0">Guest Login</h5>
+                  </div>
+                  <div className="card-body p-4">
+                    <div className="form-floating mb-3">
+                      <input 
+                        type="email" 
+                        className="form-control" 
+                        id="guestEmail"
+                        placeholder="name@example.com"
+                        value={guestEmail}
+                        onChange={(e) => setGuestEmail(e.target.value)}
+                      />
+                      <label htmlFor="guestEmail">Email address</label>
+                    </div>
+                    <div className="d-grid">
+                      <Button 
+                        variant="primary" 
+                        size="lg"
+                        onClick={handleGuestPopup}
+                      >
+                        Continue as Guest
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="mt-4 text-muted small">
               <p>
                 By continuing, you agree to our 

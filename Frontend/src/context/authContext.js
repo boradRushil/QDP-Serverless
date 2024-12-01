@@ -7,6 +7,10 @@ const AuthContext = createContext();
 const Auth = ({ children }) => {
   const [role, setRole] = useState("");
   const [status, setStatus] = useState(false);
+  const [numberOfFiles, setNumberOfFiles] = useState(0);
+  const [guestEmail, setGuestEmail] = useState("");
+  const [email, setEmail] = useState("");
+  
 
   const authenticate = async (email, password) => {
     return new Promise((resolve, reject) => {
@@ -23,6 +27,7 @@ const Auth = ({ children }) => {
       user.authenticateUser(authDetails, {
         onSuccess: (data) => {
           console.log("onSuccess:", data);
+          localStorage.setItem('userEmail', email);
           resolve();
         },
         onFailure: (err) => {
@@ -51,7 +56,7 @@ const Auth = ({ children }) => {
           }
         });
       } else {
-        reject(new Error("User not found"));
+        // reject(true);
       }
     });
   };
@@ -61,8 +66,10 @@ const Auth = ({ children }) => {
     if (user) {
       user.signOut();
       setStatus(false);
+      localStorage.removeItem('userEmail');
+      console.log("Logged out");
     }
-  };
+  };  
 
   const forgotPassword = async (email) => {
     return new Promise((resolve, reject) => {
@@ -116,6 +123,12 @@ const Auth = ({ children }) => {
         setStatus,
         role,
         setRole,
+        numberOfFiles,
+        setNumberOfFiles,
+        email,
+        setEmail,
+        guestEmail,
+        setGuestEmail,
       }}
     > 
       {children}
@@ -132,3 +145,6 @@ const useAuth = () => {
 };
 
 export { Auth, AuthContext, useAuth };
+
+
+

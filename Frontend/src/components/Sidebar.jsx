@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaFileExport, FaSearch, FaCloud, FaList } from 'react-icons/fa';
+import { useAuth } from '../context/authContext';
 
 const Sidebar = () => {
-    const services = [
-        { id: 1, name: 'JSON to CSV Converter', icon: FaFileExport, route: '/dashboard/service1' },
-        { id: 2, name: 'Named Entity Extractor', icon: FaSearch, route: '/dashboard/service2' },
-        { id: 3, name: 'Word Cloud Generator', icon: FaCloud, route: '/dashboard/service3' },
+    const { getSession, status } = useAuth();
+    const services = status ? [
+        { id: 1, name: 'JSON to CSV Converter', icon: FaFileExport, route: '/dashboard/service1' ,color: 'text-light'},
+        { id: 2, name: 'Named Entity Extractor', icon: FaSearch, route: '/dashboard/service2' ,color: 'text-light'},
+        { id: 3, name: 'Word Cloud Generator', icon: FaCloud, route: '/dashboard/service3' ,color: 'text-light'},
+    ] : [
+        { id: 1, name: 'JSON to CSV Converter', icon: FaFileExport, route: '/login' ,color: 'text-secondary'},
+        { id: 2, name: 'Named Entity Extractor', icon: FaSearch, route: '/login' ,color: 'text-secondary'},
+        { id: 3, name: 'Word Cloud Generator', icon: FaCloud, route: '/dashboard/service3' ,color: 'text-light'}, 
     ];
 
     return (
@@ -22,7 +28,7 @@ const Sidebar = () => {
                 <Link
                     key={service.id}
                     to={service.route}
-                    className="text-decoration-none text-white my-2 p-2 sidebar-item"
+                    className={`text-decoration-none text-secondary ${service.color} my-2 p-2 sidebar-item}`}
                     style={{
                         display: 'flex',
                         alignItems: 'center',

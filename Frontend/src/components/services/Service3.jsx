@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Card, Row, Col, Button, Table, Spinner, Toast, ToastContainer } from 'react-bootstrap';
+import { useAuth } from '../../context/authContext';
+import FeedbackComponent from '../FeedbackComponent';
+import FeedbackTableComponent from '../FeedbackTableComponent';
 
 const Service3 = ({ service }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -9,6 +12,9 @@ const Service3 = ({ service }) => {
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
+    const { status, numberOfFiles ,setNumberOfFiles } = useAuth();
+    const email = localStorage.getItem('userEmail');
+    const [feedbackRefresh, setFeedbackRefresh] = useState(0);
 
     const showToastMessage = (message) => {
         setToastMessage(message);
@@ -24,6 +30,10 @@ const Service3 = ({ service }) => {
     };
 
     const handleProcessFile = async () => {
+        if (!status && numberOfFiles >= 2) {
+            showToastMessage('You have reached the maximum number of files.');
+            return;
+        }
         if (!uploadedFile) {
             showToastMessage('Please upload a file first.');
             return;
@@ -82,6 +92,10 @@ const Service3 = ({ service }) => {
             console.error('Error during status check:', error);
             showToastMessage('Error checking file status.');
         }
+    };
+
+    const handleFeedbackSubmitted = () => {
+        setFeedbackRefresh(prev => prev + 1); // Increment to trigger refresh
     };
 
     return (
@@ -152,6 +166,18 @@ const Service3 = ({ service }) => {
                     </tr>
                     </tbody>
                 </Table>
+                <div className="mt-4">
+                    <FeedbackComponent 
+                        userId={email} 
+                        processId={referenceCode || 'unknown'} 
+                        serviceId={3}
+                        onFeedbackSubmitted={handleFeedbackSubmitted} 
+                    />
+                    <FeedbackTableComponent 
+                        service={3} 
+                        refreshTrigger={feedbackRefresh}
+                    />
+                </div>
             </Card.Body>
 
             <ToastContainer position="bottom-end" className="p-3">

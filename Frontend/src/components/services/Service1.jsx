@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Button, Table, Spinner, Toast, ToastContainer } from 'react-bootstrap';
+import { useAuth } from '../../context/authContext';
+import FeedbackComponent from '../FeedbackComponent';
+import FeedbackTableComponent from '../FeedbackTableComponent';
 
 const Service1 = ({ service }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -9,7 +12,21 @@ const Service1 = ({ service }) => {
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
+    const { numberOfFiles, setNumberOfFiles } = useAuth();
+    const email = localStorage.getItem('userEmail');
+    const [feedbackRefresh, setFeedbackRefresh] = useState(0);
 
+    // console.log("status", status);
+
+    // useEffect(() => {
+    //     if (status) {
+    //         console.log("logout");
+    //         localStorage.removeItem('userEmail');
+    //         setEmail('');
+    //     }
+    // }, [status, setEmail]);
+
+    console.log("User Email:", email);
     const showToastMessage = (message) => {
         setToastMessage(message);
         setShowToast(true);
@@ -24,6 +41,7 @@ const Service1 = ({ service }) => {
     };
 
     const handleProcessFile = async () => {
+
         if (!uploadedFile) {
             showToastMessage('Please upload a file first.');
             return;
@@ -47,7 +65,9 @@ const Service1 = ({ service }) => {
             const result = await response.json();
             setReferenceCode(result.reference_code);
             setProcessingStatus('In Progress');
+            setNumberOfFiles(numberOfFiles + 1);
             showToastMessage('File processing started successfully.');
+
         } catch (error) {
             console.error('Error during file processing:', error);
             showToastMessage('Error during file processing.');
@@ -82,6 +102,10 @@ const Service1 = ({ service }) => {
             console.error('Error during status check:', error);
             showToastMessage('Error checking file status.');
         }
+    };
+
+    const handleFeedbackSubmitted = () => {
+        setFeedbackRefresh(prev => prev + 1);
     };
 
     return (
@@ -152,6 +176,18 @@ const Service1 = ({ service }) => {
                     </tr>
                     </tbody>
                 </Table>
+                <div className="mt-4">
+                    <FeedbackComponent 
+                        userId={email} 
+                        processId={referenceCode || 'unknown'} 
+                        serviceId={1}
+                        onFeedbackSubmitted={handleFeedbackSubmitted} 
+                    />
+                    <FeedbackTableComponent 
+                        service={1} 
+                        refreshTrigger={feedbackRefresh}
+                    />
+                </div>
             </Card.Body>
 
             <ToastContainer position="bottom-end" className="p-3">

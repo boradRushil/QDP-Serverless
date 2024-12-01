@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Card, Row, Col, Button, Table, Spinner, Toast, ToastContainer } from 'react-bootstrap';
-
+import { useAuth } from '../../context/authContext';
+import FeedbackComponent from '../FeedbackComponent';
+import FeedbackTableComponent from '../FeedbackTableComponent';
 const Service2 = ({ service }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
     const [referenceCode, setReferenceCode] = useState('');
@@ -9,6 +11,8 @@ const Service2 = ({ service }) => {
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
+    const email = localStorage.getItem('userEmail');
+    const [feedbackRefresh, setFeedbackRefresh] = useState(0);
 
     const showToastMessage = (message) => {
         setToastMessage(message);
@@ -98,6 +102,10 @@ const Service2 = ({ service }) => {
         document.body.removeChild(link);
     };
 
+    const handleFeedbackSubmitted = () => {
+        setFeedbackRefresh(prev => prev + 1);
+    };
+
     return (
         <Card>
             <Card.Header className="bg-primary text-white">
@@ -169,6 +177,18 @@ const Service2 = ({ service }) => {
                     </tr>
                     </tbody>
                 </Table>
+                <div className="mt-4">
+                    <FeedbackComponent 
+                        userId={email} 
+                        processId={referenceCode || 'unknown'} 
+                        serviceId={2}
+                        onFeedbackSubmitted={handleFeedbackSubmitted} 
+                    />
+                    <FeedbackTableComponent 
+                        service={2} 
+                        refreshTrigger={feedbackRefresh}
+                    />
+                </div>
             </Card.Body>
 
             <ToastContainer position="bottom-end" className="p-3">
