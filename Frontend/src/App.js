@@ -16,6 +16,7 @@ import Analytics from './pages/Analytics';
 import FeedbackTable from './pages/FeedbackTable';
 import { Auth } from './context/authContext';
 import Protected from './utils/Protected';
+import ServiceShowcase from "./components/ServiceShowcase";
 
 function App() {
     return (

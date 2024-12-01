@@ -5,6 +5,11 @@ import { useAuth } from '../context/authContext';
 
 const Sidebar = () => {
     const { getSession, status } = useAuth();
+
+    useEffect(() => {
+        getSession();
+    }, []);
+
     const services = status ? [
         { id: 1, name: 'JSON to CSV Converter', icon: FaFileExport, route: '/dashboard/service1' ,color: 'text-light'},
         { id: 2, name: 'Named Entity Extractor', icon: FaSearch, route: '/dashboard/service2' ,color: 'text-light'},
