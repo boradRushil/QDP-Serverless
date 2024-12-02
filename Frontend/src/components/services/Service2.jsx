@@ -232,7 +232,7 @@ const Service2 = ({ service }) => {
                 </Table>
                 <div className="mt-4">
                     <FeedbackComponent 
-                        userId={email} 
+                        userId={userEmail}
                         processId={referenceCode || 'unknown'} 
                         serviceId={2}
                         onFeedbackSubmitted={handleFeedbackSubmitted} 
