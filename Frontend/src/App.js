@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import Service1 from './components/services/Service1';
 import Service2 from './components/services/Service2';
 import Service3 from './components/services/Service3';
+import Service4 from './components/services/Service4';
 import Analytics from './pages/Analytics';
 import FeedbackTable from './pages/FeedbackTable';
 import { Auth } from './context/authContext';
@@ -45,6 +46,10 @@ function App() {
                         <Route
                             path="service3"
                             element={<Service3 service={{ name: 'Word Cloud Generator' }} />}
+                        />
+                        <Route
+                            path="service4"
+                            element={<Service4 service={{ name: 'Chat' }} />}
                         />
                     </Route>
                 </Routes>

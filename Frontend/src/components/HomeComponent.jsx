@@ -77,6 +77,13 @@ const HomeComponent = () => {
       iconClass: "fas fa-cloud",
       tech: "GCP Looker Studio",
       route: "/dashboard/service3"
+    },
+    {
+      title: "Chat",
+      text: "Chat with our QDP Agent.",
+      iconClass: "fas fa-comment-dots",
+      tech: "GCP Pub/Sub",
+      route: "/dashboard/service4"
     }
   ];
 
