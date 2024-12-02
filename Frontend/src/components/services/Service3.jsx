@@ -15,7 +15,7 @@ const Service3 = ({ service }) => {
     const [showToast, setShowToast] = useState(false);
     const [history, setHistory] = useState([]); // New state for file history
     const { status, numberOfFiles, setNumberOfFiles } = useAuth();
-    const email = localStorage.getItem('userEmail');
+    const userEmail = localStorage.getItem('userEmail');
     const [feedbackRefresh, setFeedbackRefresh] = useState(0);
 
     const showToastMessage = (message) => {
@@ -117,7 +117,7 @@ const Service3 = ({ service }) => {
     };
 
     const handleFeedbackSubmitted = () => {
-        setFeedbackRefresh(prev => prev + 1);
+        setFeedbackRefresh((prev) => prev + 1);
     };
 
     return (
@@ -168,30 +168,30 @@ const Service3 = ({ service }) => {
                 <h5 className="mt-4">Processing History</h5>
                 <Table bordered hover>
                     <thead>
-                        <tr>
-                            <th>File Name</th>
-                            <th>Upload Date</th>
-                            <th>Reference Code</th>
-                            <th>Status</th>
-                        </tr>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Upload Date</th>
+                        <th>Reference Code</th>
+                        <th>Status</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {history.length > 0 ? (
-                            history.map((entry, index) => (
-                                <tr key={index}>
-                                    <td>{entry.fileName}</td>
-                                    <td>{entry.uploadDate}</td>
-                                    <td>{entry.referenceCode}</td>
-                                    <td>{entry.status}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="4" className="text-center">
-                                    No history available
-                                </td>
+                    {history.length > 0 ? (
+                        history.map((entry, index) => (
+                            <tr key={index}>
+                                <td>{entry.fileName}</td>
+                                <td>{entry.uploadDate}</td>
+                                <td>{entry.referenceCode}</td>
+                                <td>{entry.status}</td>
                             </tr>
-                        )}
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="4" className="text-center">
+                                No history available
+                            </td>
+                        </tr>
+                    )}
                     </tbody>
                 </Table>
 
