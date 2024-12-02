@@ -66,7 +66,7 @@ const LoginVerifyComponent = () => {
                     await authenticate(email, password);
                     setRole(userDetails);
                     setStatus(true);
-                    navigate('/');
+                    navigate('/dashboard');
                     toast.success('Login successful!');  // Success toast notification
                 } else {
                     toast.error('Math skill answer is incorrect');
