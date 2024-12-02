@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaFileExport, FaSearch, FaCloud, FaList } from 'react-icons/fa';
+import { FaFileExport, FaSearch, FaCloud, FaList, FaComments } from 'react-icons/fa';
 import { useAuth } from '../context/authContext';
 
 const Sidebar = () => {
@@ -14,10 +14,13 @@ const Sidebar = () => {
         { id: 1, name: 'JSON to CSV Converter', icon: FaFileExport, route: '/dashboard/service1' ,color: 'text-light'},
         { id: 2, name: 'Named Entity Extractor', icon: FaSearch, route: '/dashboard/service2' ,color: 'text-light'},
         { id: 3, name: 'Word Cloud Generator', icon: FaCloud, route: '/dashboard/service3' ,color: 'text-light'},
+        { id: 4, name: 'Chat', icon: FaComments, route: '/dashboard/service4' ,color: 'text-light'}
+
     ] : [
         { id: 1, name: 'JSON to CSV Converter', icon: FaFileExport, route: '/login' ,color: 'text-secondary'},
         { id: 2, name: 'Named Entity Extractor', icon: FaSearch, route: '/login' ,color: 'text-secondary'},
         { id: 3, name: 'Word Cloud Generator', icon: FaCloud, route: '/dashboard/service3' ,color: 'text-light'}, 
+        { id: 4, name: 'Chat', icon: FaComments, route: '/login' ,color: 'text-secondary'}
     ];
 
     return (
