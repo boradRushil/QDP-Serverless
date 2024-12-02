@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Button, Table, Spinner, Toast, ToastContainer } from 'react-bootstrap';
 import { useAuth } from '../../context/authContext';
 import FeedbackComponent from '../FeedbackComponent';
 import FeedbackTableComponent from '../FeedbackTableComponent';
+
 
 const Service3 = ({ service }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -12,8 +13,9 @@ const Service3 = ({ service }) => {
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
-    const { status, numberOfFiles ,setNumberOfFiles } = useAuth();
-    const userEmail = localStorage.getItem('userEmail');
+    const [history, setHistory] = useState([]); // New state for file history
+    const { status, numberOfFiles, setNumberOfFiles } = useAuth();
+    const email = localStorage.getItem('userEmail');
     const [feedbackRefresh, setFeedbackRefresh] = useState(0);
 
     const showToastMessage = (message) => {
@@ -58,6 +60,17 @@ const Service3 = ({ service }) => {
             setReferenceCode(result.reference_code);
             setProcessingStatus('In Progress');
             showToastMessage('File processing started successfully.');
+
+            // Add to history
+            setHistory((prevHistory) => [
+                ...prevHistory,
+                {
+                    fileName: uploadedFile.name,
+                    uploadDate: new Date().toLocaleString(),
+                    referenceCode: result.reference_code,
+                    status: 'In Progress',
+                },
+            ]);
         } catch (error) {
             console.error('Error during file processing:', error);
             showToastMessage('Error during file processing.');
@@ -85,6 +98,15 @@ const Service3 = ({ service }) => {
             if (result.processing_status === 'Succeeded') {
                 setDownloadUrl(result.public_download_url);
                 showToastMessage('File processing completed. Ready for download.');
+
+                // Update status in history
+                setHistory((prevHistory) =>
+                    prevHistory.map((entry) =>
+                        entry.referenceCode === referenceCode
+                            ? { ...entry, status: 'Succeeded' }
+                            : entry
+                    )
+                );
             } else {
                 showToastMessage('File is still processing. Please check again later.');
             }
@@ -142,41 +164,45 @@ const Service3 = ({ service }) => {
                     </Col>
                 </Row>
 
-                <Table bordered hover className="mt-4">
+                {/* History Table */}
+                <h5 className="mt-4">Processing History</h5>
+                <Table bordered hover>
                     <thead>
-                    <tr>
-                        <th>Reference Code</th>
-                        <th>Status</th>
-                        <th>Download Link</th>
-                    </tr>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Upload Date</th>
+                            <th>Reference Code</th>
+                            <th>Status</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>{referenceCode || 'N/A'}</td>
-                        <td>{processingStatus || 'N/A'}</td>
-                        <td>
-                            {downloadUrl ? (
-                                <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
-                                    Download File
-                                </a>
-                            ) : (
-                                'Not available'
-                            )}
-                        </td>
-                    </tr>
+                        {history.length > 0 ? (
+                            history.map((entry, index) => (
+                                <tr key={index}>
+                                    <td>{entry.fileName}</td>
+                                    <td>{entry.uploadDate}</td>
+                                    <td>{entry.referenceCode}</td>
+                                    <td>{entry.status}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="4" className="text-center">
+                                    No history available
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </Table>
+
                 <div className="mt-4">
-                    <FeedbackComponent 
-                        userId={email} 
-                        processId={referenceCode || 'unknown'} 
+                    <FeedbackComponent
+                        userId={email}
+                        processId={referenceCode || 'unknown'}
                         serviceId={3}
-                        onFeedbackSubmitted={handleFeedbackSubmitted} 
+                        onFeedbackSubmitted={handleFeedbackSubmitted}
                     />
-                    <FeedbackTableComponent 
-                        service={3} 
-                        refreshTrigger={feedbackRefresh}
-                    />
+                    <FeedbackTableComponent service={3} refreshTrigger={feedbackRefresh} />
                 </div>
             </Card.Body>
 
