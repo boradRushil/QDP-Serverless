@@ -46,7 +46,7 @@ const Service3 = ({ service }) => {
         try {
             const payload = {
                 file_name: uploadedFile.name,
-                file_data: btoa(await uploadedFile.text()), // Base64 encode file
+                file_data: btoa(await uploadedFile.text()),
                 user_email: userEmail,
             };
 

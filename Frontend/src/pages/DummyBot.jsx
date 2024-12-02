@@ -16,7 +16,7 @@ export default function Component() {
       setMessages([...messages, { text: inputMessage, isUser: true }])
       setInputMessage('')
       setIsAssistantTyping(true)
-      // Simulate assistant response
+
       setTimeout(() => {
         setIsAssistantTyping(false)
         setMessages(prev => [...prev, { text: "Hello! I'm your virtual assistant. How can I help you today?", isUser: false }])

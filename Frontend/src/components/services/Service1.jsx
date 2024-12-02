@@ -89,7 +89,7 @@ const Service1 = ({ service }) => {
             if (result.processing_status === 'Succeeded') {
                 setDownloadUrl(result.public_download_url);
                 showToastMessage('File processing completed. Ready for download.');
-                fetchPreviousResults(); // Update previous results
+                fetchPreviousResults();
             } else {
                 showToastMessage('File is still processing. Please check again later.');
             }

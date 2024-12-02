@@ -119,7 +119,7 @@ const Service2 = ({ service }) => {
             document.body.removeChild(link);
         }
     };
-    // Fetch previous results when the component mounts
+
     const fetchPreviousResults = async () => {
         try {
             const response = await fetch(`https://fk3uxpyogkxg7kwg26q75vxm3m0pccsu.lambda-url.us-east-1.on.aws/?user_email=${encodeURIComponent(userEmail)}`);
@@ -131,7 +131,7 @@ const Service2 = ({ service }) => {
     };
 
     useEffect(() => {
-        fetchPreviousResults(); // Call fetchPreviousResults on component mount
+        fetchPreviousResults();
     }, []);
 
     const formatDate = (dateString) => {
