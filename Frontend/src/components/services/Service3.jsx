@@ -13,7 +13,7 @@ const Service3 = ({ service }) => {
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
     const { status, numberOfFiles ,setNumberOfFiles } = useAuth();
-    const email = localStorage.getItem('userEmail');
+    const userEmail = localStorage.getItem('userEmail');
     const [feedbackRefresh, setFeedbackRefresh] = useState(0);
 
     const showToastMessage = (message) => {
@@ -45,7 +45,7 @@ const Service3 = ({ service }) => {
             const payload = {
                 file_name: uploadedFile.name,
                 file_data: btoa(await uploadedFile.text()), // Base64 encode file
-                user_email: 'user@example.com',
+                user_email: userEmail,
             };
 
             const response = await fetch('SERVICE3_POST_LAMBDA_URL', {
@@ -95,7 +95,7 @@ const Service3 = ({ service }) => {
     };
 
     const handleFeedbackSubmitted = () => {
-        setFeedbackRefresh(prev => prev + 1); // Increment to trigger refresh
+        setFeedbackRefresh(prev => prev + 1);
     };
 
     return (

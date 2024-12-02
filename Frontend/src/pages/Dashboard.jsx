@@ -51,7 +51,6 @@ const Dashboard = () => {
             <div className="flex-grow-1 d-flex flex-column">
                 <Header title="Quick Data Processor" />
                 <Container fluid className="flex-grow-1 overflow-auto p-4 bg-light">
-                    {/* Show the ServiceShowcase if no active service is selected */}
                     {activeService === null ? (
                         <ServiceShowcase
                             services={services}

@@ -7,18 +7,18 @@ const FeedbackTableComponent = ({ service, refreshTrigger }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Function to fetch all feedbacks when the component is mounted
+
   const fetchFeedbacks = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await getFeedback();
-      console.log("Response:", response); // For debugging
+      console.log("Response:", response);
       if (response.data && response.data.body) {
         console.log("Feedbacks:", response.data.body);
-        setFeedbacks(response.data.body); // Set feedbacks from the response
+        setFeedbacks(response.data.body);
       } else {
-        setFeedbacks([]); // If no feedback is returned, set an empty array
+        setFeedbacks([]);
       }
     } catch (error) {
       console.error("Error fetching feedback data:", error);
@@ -29,8 +29,8 @@ const FeedbackTableComponent = ({ service, refreshTrigger }) => {
   };
 
   useEffect(() => {
-    fetchFeedbacks(); // Fetch all feedbacks when the component mounts or refreshTrigger changes
-  }, [service, refreshTrigger]); // Add refreshTrigger to dependency array
+    fetchFeedbacks();
+  }, [service, refreshTrigger]);
 
   return (
     <div className="feedback-table-container">
@@ -72,7 +72,7 @@ const FeedbackTableComponent = ({ service, refreshTrigger }) => {
             </tbody>
           </Table>
         ) : (
-          <p>No feedbacks available.</p> // Message if no feedback is found
+          <p>No feedbacks available.</p>
         )
       )}
     </div>

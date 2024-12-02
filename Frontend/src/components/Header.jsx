@@ -9,7 +9,7 @@ const Header = ({ title, onLogout }) => {
             </Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-                {/* Add user profile or other elements here */}
+
                 <Button variant="outline-light" onClick={onLogout}>
                     Logout
                 </Button>
