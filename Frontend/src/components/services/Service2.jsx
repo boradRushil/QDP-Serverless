@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import { Card, Row, Col, Button, Table, Spinner, Toast, ToastContainer } from 'react-bootstrap';
-import { useAuth } from '../../context/authContext';
 import FeedbackComponent from '../FeedbackComponent';
 import FeedbackTableComponent from '../FeedbackTableComponent';
 const Service2 = ({ service }) => {
@@ -8,13 +7,12 @@ const Service2 = ({ service }) => {
     const [referenceCode, setReferenceCode] = useState('');
     const [processingStatus, setProcessingStatus] = useState('');
     const [entities, setEntities] = useState([]);
-    const [previousResults, setPreviousResults] = useState([]); // To store previous results
+    const [previousResults, setPreviousResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
-    const email = localStorage.getItem('userEmail');
+    const userEmail = localStorage.getItem('userEmail');
     const [feedbackRefresh, setFeedbackRefresh] = useState(0);
-    const userEmail = "user@example.com"; // Example email, replace with actual
 
     const showToastMessage = (message) => {
         setToastMessage(message);
@@ -43,7 +41,7 @@ const Service2 = ({ service }) => {
             const payload = {
                 file_name: uploadedFile.name,
                 file_data: btoa(await uploadedFile.text()), // Base64 encode file
-                user_email: 'user@example.com',
+                user_email: userEmail,
             };
 
             const response = await fetch('https://gi5xjk5b4qeuqmhrt5emaligpq0fkjsa.lambda-url.us-east-1.on.aws/', {
@@ -121,7 +119,7 @@ const Service2 = ({ service }) => {
             document.body.removeChild(link);
         }
     };
-    // Fetch previous results when the component mounts
+
     const fetchPreviousResults = async () => {
         try {
             const response = await fetch(`https://fk3uxpyogkxg7kwg26q75vxm3m0pccsu.lambda-url.us-east-1.on.aws/?user_email=${encodeURIComponent(userEmail)}`);
@@ -133,15 +131,15 @@ const Service2 = ({ service }) => {
     };
 
     useEffect(() => {
-        fetchPreviousResults(); // Call fetchPreviousResults on component mount
+        fetchPreviousResults();
     }, []);
 
     const formatDate = (dateString) => {
-        // Remove microseconds and keep the timestamp in a format that JS can handle
-        const formattedDateString = dateString.split('.')[0];  // Split and remove microseconds
-        const date = new Date(formattedDateString);  // Create Date object
 
-        return date.toLocaleString();  // Format the date to a readable string
+        const formattedDateString = dateString.split('.')[0];
+        const date = new Date(formattedDateString);
+
+        return date.toLocaleString();
     };
 
     const handleFeedbackSubmitted = () => {
@@ -234,7 +232,7 @@ const Service2 = ({ service }) => {
                 </Table>
                 <div className="mt-4">
                     <FeedbackComponent 
-                        userId={email} 
+                        userId={userEmail}
                         processId={referenceCode || 'unknown'} 
                         serviceId={2}
                         onFeedbackSubmitted={handleFeedbackSubmitted} 
@@ -244,34 +242,6 @@ const Service2 = ({ service }) => {
                         refreshTrigger={feedbackRefresh}
                     />
                 </div>
-                {/*<Table bordered hover className="mt-4">*/}
-                {/*    <thead>*/}
-                {/*    <tr>*/}
-                {/*        <th>Reference Code</th>*/}
-                {/*        <th>Status</th>*/}
-                {/*        <th>Entities Extracted</th>*/}
-                {/*    </tr>*/}
-                {/*    </thead>*/}
-                {/*    <tbody>*/}
-                {/*    <tr>*/}
-                {/*        <td>{referenceCode || 'N/A'}</td>*/}
-                {/*        <td>{processingStatus || 'N/A'}</td>*/}
-                {/*        <td>*/}
-                {/*            {entities.length > 0 ? (*/}
-                {/*                <ul>*/}
-                {/*                    {result.named_entities_results.map((entity, index) => (*/}
-                {/*                        <li key={index}>*/}
-                {/*                            {entity.text} ({entity.label})*/}
-                {/*                        </li>*/}
-                {/*                    ))}*/}
-                {/*                </ul>*/}
-                {/*            ) : (*/}
-                {/*                'Not available'*/}
-                {/*            )}*/}
-                {/*        </td>*/}
-                {/*    </tr>*/}
-                {/*    </tbody>*/}
-                {/*</Table>*/}
 
             </Card.Body>
 

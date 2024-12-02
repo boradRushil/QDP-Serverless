@@ -1,16 +1,25 @@
 import React from 'react';
 import { Navbar, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-const Header = ({ title, onLogout }) => {
+const Header = ({ title }) => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.clear();
+        sessionStorage.clear();
+
+        navigate('/login');
+    };
+
     return (
         <Navbar bg="primary" variant="dark" className="px-4 py-2">
-            <Navbar.Brand className="fw-bold">
+            <Navbar.Brand className="fw-bold" style={{ cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
                 {title}
             </Navbar.Brand>
             <Navbar.Toggle />
             <Navbar.Collapse className="justify-content-end">
-                {/* Add user profile or other elements here */}
-                <Button variant="outline-light" onClick={onLogout}>
+                <Button variant="outline-light" onClick={handleLogout}>
                     Logout
                 </Button>
             </Navbar.Collapse>

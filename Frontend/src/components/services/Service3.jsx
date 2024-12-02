@@ -15,7 +15,7 @@ const Service3 = ({ service }) => {
     const [showToast, setShowToast] = useState(false);
     const [history, setHistory] = useState([]);
     const { status, numberOfFiles, setNumberOfFiles } = useAuth();
-    const email = localStorage.getItem('userEmail');
+    const userEmail = localStorage.getItem('userEmail');
     const [feedbackRefresh, setFeedbackRefresh] = useState(0);
 
     const showToastMessage = (message) => {
@@ -61,7 +61,8 @@ const Service3 = ({ service }) => {
 
             const payload = {
                 file_name: uploadedFile.name,
-                file_data: fileContent, // Use raw text content
+                file_data: btoa(await uploadedFile.text()),
+                user_email: userEmail,
             };
 
             const response = await fetch('SERVICE3_POST_LAMBDA_URL', {
@@ -171,36 +172,36 @@ const Service3 = ({ service }) => {
                 <h5 className="mt-4">Processing History</h5>
                 <Table bordered hover>
                     <thead>
-                        <tr>
-                            <th>File Name</th>
-                            <th>Upload Date</th>
-                            <th>Reference Code</th>
-                            <th>Status</th>
-                        </tr>
+                    <tr>
+                        <th>File Name</th>
+                        <th>Upload Date</th>
+                        <th>Reference Code</th>
+                        <th>Status</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {history.length > 0 ? (
-                            history.map((entry, index) => (
-                                <tr key={index}>
-                                    <td>{entry.fileName}</td>
-                                    <td>{entry.uploadDate}</td>
-                                    <td>{entry.referenceCode}</td>
-                                    <td>{entry.status}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="4" className="text-center">
-                                    No history available
-                                </td>
+                    {history.length > 0 ? (
+                        history.map((entry, index) => (
+                            <tr key={index}>
+                                <td>{entry.fileName}</td>
+                                <td>{entry.uploadDate}</td>
+                                <td>{entry.referenceCode}</td>
+                                <td>{entry.status}</td>
                             </tr>
-                        )}
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="4" className="text-center">
+                                No history available
+                            </td>
+                        </tr>
+                    )}
                     </tbody>
                 </Table>
 
                 <div className="mt-4">
                     <FeedbackComponent
-                        userId={email}
+                        userId={userEmail}
                         processId={referenceCode || 'unknown'}
                         serviceId={3}
                         onFeedbackSubmitted={handleFeedbackSubmitted}

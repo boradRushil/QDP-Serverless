@@ -13,22 +13,11 @@ const Service1 = ({ service }) => {
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
     const [previousResults, setPreviousResults] = useState([]);
-    const userEmail = "user@example.com";
     const { numberOfFiles, setNumberOfFiles } = useAuth();
-    const email = localStorage.getItem('userEmail');
+    const userEmail = localStorage.getItem('userEmail');
     const [feedbackRefresh, setFeedbackRefresh] = useState(0);
 
-    // console.log("status", status);
 
-    // useEffect(() => {
-    //     if (status) {
-    //         console.log("logout");
-    //         localStorage.removeItem('userEmail');
-    //         setEmail('');
-    //     }
-    // }, [status, setEmail]);
-
-    console.log("User Email:", email);
     const showToastMessage = (message) => {
         setToastMessage(message);
         setShowToast(true);
@@ -58,7 +47,7 @@ const Service1 = ({ service }) => {
             const payload = {
                 file_name: uploadedFile.name,
                 file_data: btoa(await uploadedFile.text()),
-                user_email: 'user@example.com',
+                user_email: userEmail,
             };
 
             const response = await fetch('https://2tn3ehho7sba6dnavpexebsn7m0soppt.lambda-url.us-east-1.on.aws/', {
@@ -100,7 +89,7 @@ const Service1 = ({ service }) => {
             if (result.processing_status === 'Succeeded') {
                 setDownloadUrl(result.public_download_url);
                 showToastMessage('File processing completed. Ready for download.');
-                fetchPreviousResults(); // Update previous results
+                fetchPreviousResults();
             } else {
                 showToastMessage('File is still processing. Please check again later.');
             }
@@ -220,7 +209,7 @@ const Service1 = ({ service }) => {
                 </Table>
                 <div className="mt-4">
                     <FeedbackComponent 
-                        userId={email} 
+                        userId={userEmail}
                         processId={referenceCode || 'unknown'} 
                         serviceId={1}
                         onFeedbackSubmitted={handleFeedbackSubmitted} 
