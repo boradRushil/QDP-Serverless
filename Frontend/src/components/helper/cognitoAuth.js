@@ -8,8 +8,8 @@ const user_pool_id = process.env.REACT_APP_USER_POOL_ID;
 const client_id = process.env.REACT_APP_CLIENT_ID
 
 const poolData = {
-    UserPoolId: {user_pool_id}, // Replace with your Cognito User Pool ID
-    ClientId: {client_id}, // Replace with your App Client ID
+    UserPoolId: {user_pool_id}, 
+    ClientId: {client_id}, 
 };
 
 const userPool = new CognitoUserPool(poolData);
