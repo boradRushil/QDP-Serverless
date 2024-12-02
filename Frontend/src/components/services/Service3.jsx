@@ -52,20 +52,20 @@ const Service3 = ({ service }) => {
             showToastMessage('Please upload a file first.');
             return;
         }
-
+    
         setLoading(true);
-
+    
         try {
             const userToken = localStorage.getItem('userToken');
             if (!userToken) throw new Error('User not authenticated.');
-
+    
             const payload = {
                 file_name: uploadedFile.name,
-                file_data: btoa(await uploadedFile.text()),
-                user_email: userEmail,
+                data: fileContent,  // Send the file content directly, no base64 encoding needed
+                mimetype: uploadedFile.type,
             };
-
-            const response = await fetch('SERVICE3_POST_LAMBDA_URL', {
+    
+            const response = await fetch('https://us-central1-quickdataprocessorbot.cloudfunctions.net/dp3-frontend-function', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,7 +73,12 @@ const Service3 = ({ service }) => {
                 },
                 body: JSON.stringify(payload),
             });
-
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to process the file.');
+            }
+    
             const result = await response.json();
             setReferenceCode(result.reference_code);
             setProcessingStatus('In Progress');
@@ -85,7 +90,7 @@ const Service3 = ({ service }) => {
             setLoading(false);
         }
     };
-
+    
     const handleCheckStatus = async () => {
         if (!referenceCode) {
             showToastMessage('No reference code available. Please process a file first.');
