@@ -175,6 +175,7 @@ const Service1 = ({ service }) => {
                     <thead>
                     <tr>
                         <th>Reference Code</th>
+                        <th>File Name</th>
                         <th>Date</th>
                         <th>Status</th>
                         <th>Download Link</th>
@@ -185,6 +186,7 @@ const Service1 = ({ service }) => {
                         previousResults.map((result, index) => (
                             <tr key={index}>
                                 <td>{result.reference_code}</td>
+                                <td>{result.file_name}</td>
                                 <td>{formatDate(result.processing_date)}</td>
                                 <td>{result.processing_status}</td>
                                 <td>
