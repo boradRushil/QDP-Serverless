@@ -35,6 +35,11 @@ const LoginComponent = () => {
     user.authenticateUser(authDetails, {
       onSuccess: (data) => {
         console.log('onSuccess:', data);
+
+        // Extract and save the JWT token (idToken or accessToken)
+        const token = data.getIdToken().getJwtToken();
+        localStorage.setItem('userToken', token);
+
         navigate('/loginverify', { state: { email: formData.email, password: formData.password } });
       },
       onFailure: (err) => {

@@ -4,16 +4,16 @@ import { useAuth } from '../../context/authContext';
 import FeedbackComponent from '../FeedbackComponent';
 import FeedbackTableComponent from '../FeedbackTableComponent';
 
-
 const Service3 = ({ service }) => {
     const [uploadedFile, setUploadedFile] = useState(null);
+    const [fileContent, setFileContent] = useState(''); // Store file text content
     const [referenceCode, setReferenceCode] = useState('');
     const [processingStatus, setProcessingStatus] = useState('');
     const [downloadUrl, setDownloadUrl] = useState(null);
     const [loading, setLoading] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [showToast, setShowToast] = useState(false);
-    const [history, setHistory] = useState([]); // New state for file history
+    const [history, setHistory] = useState([]);
     const { status, numberOfFiles, setNumberOfFiles } = useAuth();
     const userEmail = localStorage.getItem('userEmail');
     const [feedbackRefresh, setFeedbackRefresh] = useState(0);
@@ -25,9 +25,21 @@ const Service3 = ({ service }) => {
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
-        if (file) {
-            setUploadedFile(file);
-            showToastMessage('File selected successfully.');
+        if (file && file.type === 'text/plain') {
+            const reader = new FileReader();
+            const userToken = localStorage.getItem('userToken');
+            console.log("The token is here " + userToken);
+            reader.onload = (e) => {
+                setFileContent(e.target.result); // Store the file's text content
+                setUploadedFile(file);
+                showToastMessage('Text file loaded successfully.');
+            };
+            reader.onerror = () => {
+                showToastMessage('Error reading file.');
+            };
+            reader.readAsText(file);
+        } else {
+            showToastMessage('Please upload a valid text file.');
         }
     };
 
@@ -44,6 +56,9 @@ const Service3 = ({ service }) => {
         setLoading(true);
 
         try {
+            const userToken = localStorage.getItem('userToken');
+            if (!userToken) throw new Error('User not authenticated.');
+
             const payload = {
                 file_name: uploadedFile.name,
                 file_data: btoa(await uploadedFile.text()),
@@ -52,7 +67,10 @@ const Service3 = ({ service }) => {
 
             const response = await fetch('SERVICE3_POST_LAMBDA_URL', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userToken}`,
+                },
                 body: JSON.stringify(payload),
             });
 
@@ -60,17 +78,6 @@ const Service3 = ({ service }) => {
             setReferenceCode(result.reference_code);
             setProcessingStatus('In Progress');
             showToastMessage('File processing started successfully.');
-
-            // Add to history
-            setHistory((prevHistory) => [
-                ...prevHistory,
-                {
-                    fileName: uploadedFile.name,
-                    uploadDate: new Date().toLocaleString(),
-                    referenceCode: result.reference_code,
-                    status: 'In Progress',
-                },
-            ]);
         } catch (error) {
             console.error('Error during file processing:', error);
             showToastMessage('Error during file processing.');
@@ -86,9 +93,15 @@ const Service3 = ({ service }) => {
         }
 
         try {
+            const userToken = localStorage.getItem('userToken');
+            if (!userToken) throw new Error('User not authenticated.');
+
             const response = await fetch('SERVICE3_GET_LAMBDA_URL', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userToken}`,
+                },
                 body: JSON.stringify({ reference_code: referenceCode }),
             });
 
@@ -98,15 +111,6 @@ const Service3 = ({ service }) => {
             if (result.processing_status === 'Succeeded') {
                 setDownloadUrl(result.public_download_url);
                 showToastMessage('File processing completed. Ready for download.');
-
-                // Update status in history
-                setHistory((prevHistory) =>
-                    prevHistory.map((entry) =>
-                        entry.referenceCode === referenceCode
-                            ? { ...entry, status: 'Succeeded' }
-                            : entry
-                    )
-                );
             } else {
                 showToastMessage('File is still processing. Please check again later.');
             }
@@ -130,7 +134,7 @@ const Service3 = ({ service }) => {
                     <Col md={6}>
                         <input
                             type="file"
-                            accept=".json"
+                            accept=".txt"
                             onChange={handleFileUpload}
                             className="form-control"
                         />
