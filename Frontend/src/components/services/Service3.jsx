@@ -53,6 +53,7 @@ const Service3 = ({ service }) => {
             return;
         }
     
+        showToastMessage('Your file is being processed.');
         setLoading(true);
     
         try {
@@ -90,17 +91,65 @@ const Service3 = ({ service }) => {
             setLoading(false);
         }
     };
+
+    const handleDownload = async () => {
+        try {
+            const userToken = localStorage.getItem('userToken');
+            if (!userToken) throw new Error('User not authenticated.');
+    
+            const fileName = 'wordCloud.pdf'; // The file you want to download
+    
+            // Trigger the download cloud function with no additional data
+            const response = await fetch('https://us-central1-quickdataprocessorbot.cloudfunctions.net/dp3-download-function', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${userToken}`,
+                },
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to generate PDF.');
+            }
+    
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+    
+            // Trigger file download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            link.click();
+    
+            showToastMessage('File downloaded successfully.');
+        } catch (error) {
+            console.error('Error downloading PDF:', error);
+            showToastMessage('Error downloading file.');
+        }
+    };
+    
+    
     
     const handleCheckStatus = async () => {
+        // Show initial toast message that the file is loading
+        showToastMessage('File is loading...');
+        
+        // Use setTimeout to show another toast message after 2 seconds
+        setTimeout(() => {
+            showToastMessage('Word Cloud is ready!');
+        }, 2000);
+        
+        // Check if referenceCode is available before proceeding
         if (!referenceCode) {
             showToastMessage('No reference code available. Please process a file first.');
             return;
         }
-
+    
         try {
             const userToken = localStorage.getItem('userToken');
             if (!userToken) throw new Error('User not authenticated.');
-
+    
+            // Make the fetch call to check the file processing status
             const response = await fetch('SERVICE3_GET_LAMBDA_URL', {
                 method: 'POST',
                 headers: {
@@ -109,10 +158,11 @@ const Service3 = ({ service }) => {
                 },
                 body: JSON.stringify({ reference_code: referenceCode }),
             });
-
+    
             const result = await response.json();
             setProcessingStatus(result.processing_status);
-
+    
+            // Display the correct toast message based on the processing status
             if (result.processing_status === 'Succeeded') {
                 setDownloadUrl(result.public_download_url);
                 showToastMessage('File processing completed. Ready for download.');
@@ -156,53 +206,19 @@ const Service3 = ({ service }) => {
                         <Button
                             variant="info"
                             onClick={handleCheckStatus}
-                            disabled={!referenceCode}
                             className="mx-2"
                         >
                             Check Status
                         </Button>
                         <Button
                             variant="success"
-                            href={downloadUrl}
-                            target="_blank"
-                            disabled={!downloadUrl}
+                            onClick={handleDownload}
                             className="mx-2"
                         >
                             Download
                         </Button>
                     </Col>
                 </Row>
-
-                {/* History Table */}
-                <h5 className="mt-4">Processing History</h5>
-                <Table bordered hover>
-                    <thead>
-                    <tr>
-                        <th>File Name</th>
-                        <th>Upload Date</th>
-                        <th>Reference Code</th>
-                        <th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {history.length > 0 ? (
-                        history.map((entry, index) => (
-                            <tr key={index}>
-                                <td>{entry.fileName}</td>
-                                <td>{entry.uploadDate}</td>
-                                <td>{entry.referenceCode}</td>
-                                <td>{entry.status}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="4" className="text-center">
-                                No history available
-                            </td>
-                        </tr>
-                    )}
-                    </tbody>
-                </Table>
 
                 <div className="mt-4">
                     <FeedbackComponent
